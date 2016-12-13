@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-
-
-    <input type="button" id="action-btn" value="Get OP" />
-    <input type="button" id="printers-btn" value="Get Printers" />
-    <input type="button" id="fs-btn" value="Save Get File" />
-  </body>
-
-  <script>
-    // You can also require other files to run in this process
-    require('./renderer.js')
-  </script>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <form>
+                    <input type="text" id="numop" name="numop" value="" placeholder="Entre com o número da OP" />
+                    <button class="button" type="button" id="chooseOP">Busca OP</button>
+                    <input type"text" id="numbob" name="numbob" value="" placeholder="Número da Bobina" />
+                    <input type"text" id="code" name="code" value="" placeholder="Código do produto" />
+                    <input type"text" id="desc" name="desc" value="" placeholder="Descrição do produto" />
+                    <input type"text" id="maquina" name="maquina" value="" placeholder="Número da Extrusora" />
+                    <input type"text" id="operador" name="operador" value="" placeholder="Identificação do Operador" />
+                    <input type"text" id="pesoBruto" name="pesoBruto" value="" placeholder="Peso Bruto da Bobina" />
+                    <input type"text" id="tara" name="tara" value="" placeholder="Peso do canudo" />
+                    <input type"text" id="pesoLiquido" name="pesoLiquido" value="" placeholder="Peso Líquido da bobina" />
+                    <button class="button" type="submit">Gravar</button>
+                </form>    
+            </div>
+        </div>    
+    </body>
+    <script>
+        require('./renderer.js')
+    </script>
 </html>
