@@ -1,13 +1,22 @@
 const { ipcRenderer, remote, shell } = require('electron');
 const { dialog } = remote;
 
-const Printer = require('node-printer');
-const BD = require('mysql');
+const printer = require('node-printer');
+const db = require('mysql');
 
+var sp = require("serialport");
+
+//const SerialPort = require("serialport");
+/*
+SerialPort.list(function (err, ports) {
+    console.log('Teste teste teste teste');
+});
+*/
 const form = document.querySelector('form');
 
 const inputs = {
     numop: form.querySelector('input[name="numop"]'),
+    op: form.querySelector('input[name="op"]'),
     code: form.querySelector('input[name="code"]'),
     desc: form.querySelector('input[name="desc"]'),
     numbob: form.querySelector('input[name="numbob"]'),
@@ -19,16 +28,21 @@ const inputs = {
 };
 
 const buttons = {
-    chooseOP: document.getElementById('chooseOP'),
+    btnGetOP: document.getElementById('btnGetOP'),
     submit: form.querySelector('button[type="submit"]'),
 };
 
+require('dotenv').config();
+//console.log(process.env.BASIC)
+
+
+
 ipcRenderer.on('did-finish-load', () => {
     //carregar nomas das impressoras instaladas e escolher a que contém zebra
-    console.log(Printer.list());
+    console.log(printer.list());
 });
 
-//chamado qunado o processo realizado com sucesso
+//chamado quando o processo foi realizado com sucesso
 ipcRenderer.on('processing-did-succeed', (event, html) => {
     
 });
@@ -39,12 +53,18 @@ ipcRenderer.on('processing-did-fail', (event, error) => {
     alert('Failed :\'(');
 });
 
-//qunado o botão de escolha da OP for acionado
-buttons.chooseOP.addEventListener('click', () => {
+//quando o botão de escolha da OP for acionado
+buttons.btnGetOP.addEventListener('click', () => {
     console.log('Esse é o numero: '+inputs.numop.value);
     //chamar o busca de dados na base e retornar os dados para o html
+    query(function(rows) {
+        rows.forEach(function(row){
+            console.log(row);
+         });
+    });
     inputs.code.value = 'PEBD-S1234';
     inputs.desc.value = 'Teste de carregamento de dados';
+    inputs.op.value = process.env.DB_HOST;
 });
 
 //quando o botão submit for acionado 
@@ -59,6 +79,37 @@ form.addEventListener('submit', (event) => {
         sucesso: true,
     });
 });
+
+function query(callback) {
+    var connection = db.createConnection({
+        host     : process.env.DB_HOST,
+        user     : process.env.DB_USER,
+        password : process.env.DB_PASS,
+        database : process.env.DB_NAME
+    });
+    // connect to mysql
+    connection.connect(function(err) {
+        // in case of error
+        if(err){
+            console.log(err.code);
+            console.log(err.fatal);
+        }
+    });
+    $query = "SELECT * FROM `orders` WHERE id='" + inputs.numop.value + "'";
+    connection.query($query, function(err, rows, fields) {
+        if(err){
+            console.log("An error ocurred performing the query.");
+            console.log(err);
+            return;
+        }
+        callback(rows);
+        console.log("Query succesfully executed");
+     });
+     // Close the connection
+     connection.end(function(){
+        // The connection has been closed
+     });
+}
 
 
 /*

@@ -4,7 +4,8 @@
   "description": "Zebra Label Printing",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/linux.png --prune=true --out=release-builds"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -16,11 +17,17 @@
   "author": "GitHub",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^1.4.1"
+    "electron": "^1.4.1",
+    "electron-builder": "^10.3.0",
+    "electron-packager": "^8.3.0",
+    "electron-rebuild": "^1.4.0",
+    "electron-winstaller": "^2.5.0"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "dotenv": "^2.0.0",
     "mysql": "^2.12.0",
-    "node-printer": "^1.0.2"
+    "node-printer": "^1.0.2",
+    "serialport": "^4.0.7"
   }
 }

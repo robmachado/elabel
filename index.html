@@ -2,25 +2,85 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/css/style.css">
     </head>
     <body>
         <div class="container">
-            <div class="row">
-                <form>
-                    <input type="text" id="numop" name="numop" value="" placeholder="Entre com o número da OP" />
-                    <button class="button" type="button" id="chooseOP">Busca OP</button>
-                    <input type"text" id="numbob" name="numbob" value="" placeholder="Número da Bobina" />
-                    <input type"text" id="code" name="code" value="" placeholder="Código do produto" />
-                    <input type"text" id="desc" name="desc" value="" placeholder="Descrição do produto" />
-                    <input type"text" id="maquina" name="maquina" value="" placeholder="Número da Extrusora" />
-                    <input type"text" id="operador" name="operador" value="" placeholder="Identificação do Operador" />
-                    <input type"text" id="pesoBruto" name="pesoBruto" value="" placeholder="Peso Bruto da Bobina" />
-                    <input type"text" id="tara" name="tara" value="" placeholder="Peso do canudo" />
-                    <input type"text" id="pesoLiquido" name="pesoLiquido" value="" placeholder="Peso Líquido da bobina" />
-                    <button class="button" type="submit">Gravar</button>
-                </form>    
+            <h2>Etiquetas Extrusão</h2>
+            <form role="form">
+            <div>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="numop" name="numop" value="" placeholder="Entre com o numero da OP" >
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="btnGetOP" name="btnGetOP"><span class="glyphicon glyphicon-search"></span> Busca </button>
+                    </span>
+               </div>
             </div>
+            <div class="table borderless">
+
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <label for="op">Número da OP</label>
+                                    <input type="text" class="form-control" id="op" name="op" value="" placeholder="numero da OP" readonly />
+                                </div>
+                            </td>
+                            <td>    
+                                <div class="input-group">
+                                    <label for="numbob">Número da Bobina</label>    
+                                    <input type"text" class="form-control" id="numbob" name="numbob" value="" placeholder="Número da Bobina" />
+                                </div>    
+                            </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <div class="input-group">
+                                <label for="code">Código do Produto</label>
+                                <input type"text" class="form-control" id="code" name="code" value="" placeholder="Código do produto" readonly />
+                            </div>    
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <label for="desc">Descrição do Produto</label>
+                                <input type"text" class="form-control" id="desc" name="desc" value="" placeholder="Descrição do produto" readonly />
+                            </div>    
+                        </td>
+                        </tr>
+                        <tr>
+                           <td>
+                               <div class="input-group">
+                                    <label for="pesoBruto">Peso Bruto (kg)</label>
+                                    <input type"text" class="form-control" id="pesoBruto" name="pesoBruto" value="" placeholder="Peso Bruto da Bobina" required />
+                                </div>    
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <label for="tara">Tara (kg)</label>
+                                        <input type"text" class="form-control" id="tara" name="tara" value="" placeholder="Peso do canudo" required />
+                                    </div>    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input-group">
+                                        <button class="btn btn-success" type="submit">Gravar &amp; Imprime</button>
+                                    <div>    
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <label for="pesoLiquido">Peso Liquido (kg)</label>
+                                    <input type"text" class="form-control" id="pesoLiquido" name="pesoLiquido" value="" placeholder="Peso Líquido da bobina" readonly />
+                                </div>    
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+    
+            </div>
+            </form>
         </div>    
     </body>
     <script>
