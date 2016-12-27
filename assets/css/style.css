@@ -5,3 +5,12 @@
     border-right-style: none;
     border-bottom-style: none;
 }
+
+.alert .glyphicon{
+    float:left;
+    margin-right:9px;
+}
+
+.alert div{
+    overflow:hidden;
+}

@@ -52,20 +52,20 @@
                             <td>
                                 <div class="input-group">
                                     <label for="pesoBruto">Peso Bruto (kg)</label>
-                                    <input type"text" class="form-control" id="pesoBruto" name="pesoBruto" value="" placeholder="Peso Bruto da Bobina" required />
+                                    <input type"text" class="form-control" id="pesoBruto" name="pesoBruto" pattern="[0-9.]+" value="" placeholder="Peso Bruto da Bobina" required />
                                 </div>    
                             </td>
                             <td>
                                 <div class="input-group">
                                     <label for="tara">Tara (kg)</label>
-                                    <input type"text" class="form-control" id="tara" name="tara" value="" placeholder="Peso do canudo" required />
+                                    <input type"text" class="form-control" id="tara" name="tara" value="" placeholder="Peso do canudo" />
                                 </div>    
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <div class="input-group">
-                                    <button class="btn btn-success" type="submit">Gravar &amp; Imprime</button>
+                                    <button class="btn btn-success" type="submit" name="submeter" id="submeter" disabled>Gravar &amp; Imprime</button>
                                 <div>    
                             </td>
                             <td>
@@ -79,6 +79,7 @@
                 </table>
             </div>
             </form>
+            <div class="alert alert-danger" role="alert" name="alertaPrinter" id="alertaPrinter" style="display:none;" ><div class="glyphicon glyphicon-exclamation-sign"></div><div>ERRO!!! Não foi encontrada a impressora ZEBRA. Chame o "administrador" da rede para corrigir esse problema.</div></div>
         </div>    
     </body>
     <script>

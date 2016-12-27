@@ -1,10 +1,15 @@
+'use strict';
 
 //estabelece classes principais
 const { app, BrowserWindow, ipcMain } = require('electron');
+
 //classe para tratamento de paths
 const path = require('path');
+
 //classe para tratamento de urls
 const url = require('url');
+
+let mainWindow;
 
 //cria a janela principal 
 function createWindow() {
@@ -17,6 +22,7 @@ function createWindow() {
 
     //abre o devtools do browser, em produção isso deve estar comentado
     mainWindow.webContents.openDevTools();
+
     //ao acionar o fechamento da janela executar
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -32,7 +38,7 @@ function createWindow() {
 //executa ao submeter
 function handleSubmission() {
     ipcMain.on('did-submit-form', (event, argument) => {
-        
+    
         /*
         const { source, destination, name, fps } = argument;
         generator(source, destination, name, fps).then(
@@ -46,6 +52,7 @@ function handleSubmission() {
             }
         );
         */
+
     });
 }
 
