@@ -9,19 +9,25 @@ const path = require('path');
 //classe para tratamento de urls
 const url = require('url');
 
+//carrega a classe dotenv para leitura das configurações
+//e lê automaticamente o arquivo .ENV nessa mesma pasta
+require('dotenv').config();
+
 let mainWindow;
 
 //cria a janela principal 
 function createWindow() {
-    mainWindow = new BrowserWindow({ width: 680, height: 520, titleBarStyle: 'hidden' });
-    mainWindow.loadURL(url.format({
+    mainWindow = new BrowserWindow({ width: 680, height: 430, titleBarStyle: 'hidden' });
+        mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file:',
         slashes: true
     }));
 
-    //abre o devtools do browser, em produção isso deve estar comentado
-    mainWindow.webContents.openDevTools();
+    if (process.env.MODE == "dev") {
+        //abre o devtools do browser, em produção isso deve estar comentado
+        mainWindow.webContents.openDevTools();
+    }    
 
     //ao acionar o fechamento da janela executar
     mainWindow.on('closed', () => {

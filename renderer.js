@@ -65,11 +65,12 @@ function calcula() {
 
 ipcRenderer.on('did-finish-load', () => {
     //procura por zebra e habilita somente se encontrar
-    if (printer.match('newZebra')) {
-        //document.querySelector('button[type="submit"]').disabled = false;
+    if (printer.match('zebra')) {
+        document.querySelector('button[type="submit"]').disabled = false;
     } else {
         document.getElementById('alertaPrinter').style.display = 'block';
     }
+    inputs.numop.focus();
 });
 
 //chamado quando o processo foi realizado com sucesso
@@ -83,10 +84,20 @@ ipcRenderer.on('processing-did-fail', (event, error) => {
     alert('Failed :\'(');
 });
 
+//quando o numero da OP estiver em foco e o ENTER for acionado
+inputs.numop.addEventListener('keydown', function(event) {
+    console.log(`${event.code} was pressed.`);
+    if (`${event.code}` == 'NumpadEnter' || `${event.code}` == 'Enter')  {
+        opclick();
+    }
+});
+
 //quando o botão de escolha da OP for acionado
 buttons.btnGetOP.addEventListener('click', () => {
-    console.log('Esse é o numero: '+inputs.numop.value);
-    //chamar o busca de dados na base e retornar os dados para o html
+    opclick();
+});
+
+function opclick() {
     getOP(function(rows) {
         if (rows == '') {
             document.querySelector('button[type="submit"]').disabled = true;
@@ -99,9 +110,12 @@ buttons.btnGetOP.addEventListener('click', () => {
         inputs.desc.value = rows[0].description;
         inputs.op.value = rows[0].id ;
         inputs.numbob.value = rows[0].seq + 1;
+        buttons.submit.focus();
         readPeso();
     });
-});
+}
+
+
 let count = 99;
 let dataHora;
 let timer;
@@ -140,10 +154,13 @@ form.addEventListener('submit', (event) => {
     console.log('Acionado');
     liftOff(timer);
     saveBobina();
-    printLabel(); 
+    //printLabel(); 
+    clearFields();
+    inputs.numop.value = '';
     ipcRenderer.send('did-submit-form', {
         sucesso: true,
     });
+    inputs.numop.focus();
 });
 
 function clearFields() {
@@ -206,18 +223,24 @@ function saveBobina() {
     });
     //let data = new Date().toISOString().slice(0, 19).replace('T', ' ');
     dataHora = moment().format('YYYY-MM-DD HH:mm:ss');
+    var pl = inputs.pesoliq.value;
+    var pb = inputs.pesoBruto.value;
+    pl = pl.replace(',', '.');
+    pb = pb.replace(',', '.');
     $query = "INSERT INTO extruders (orders_id, seq, pliq, pbruto, data) VALUES ('"
         + inputs.numop.value 
         + "','"
         + inputs.numbob.value
         + "','"
-        + inputs.pesoliq.value
+        + pl
         + "','"
-        + inputs.pesoBruto.value
+        + pb
         + "','" 
         +  dataHora
         + "')";
-    console.log($query);    
+    console.log($query);
+    let id = inputs.op.value.lpad('0',7)+''+inputs.numbob.value.lpad('0',3);
+    printLabel(id,inputs.op.value,inputs.code.value, inputs.numbob.value, pl, pb, dataHora);    
     /*
     connection.query($query, function(err, rows, fields) {
         if(err){
@@ -243,24 +266,31 @@ String.prototype.lpad = function(padString, length) {
     return str;
 }
 
-function printLabel() {
+function printLabel(id, op, code, numbob, pl, pb, datahora) {
     let layoutPath = path.join(__dirname, 'label_layout_epl2.dat');
     fs.readFile(layoutPath, 'utf8', function (err,data) {
         if (err) {
             return console.log(err);
         }
-        let id = inputs.op.value.lpad('0',7)+''+inputs.numbob.value.lpad('0',3);
-
-        data = data.replace('{lote}', inputs.op.value);
-        data = data.replace('{cod}', inputs.code.value);
-        data = data.replace('{peca}', inputs.numbob.value);
-        data = data.replace('{pbruto}', inputs.pesoBruto.value);
-        data = data.replace('{pliq}', inputs.pesoliq.value);
+        data = data.replace('{lote}', op);
+        data = data.replace('{cod}', code);
+        data = data.replace('{peca}', numbob.lpad('0', 3));
+        data = data.replace('{pbruto}', pb);
+        data = data.replace('{pliq}', pl);
         data = data.replace('{id}', id);
         data = data.replace('{datahora}', dataHora);
-        console.log(data);    
+        printZebra(data, "zebra");
     });
-    
 }
+
+function printZebra(layout, printer_name) {
+    //console.log(printer.list());
+	let zebra = new printer('zebra');
+    //console.log(zebra);
+    //console.log(layout);
+    let jobFromText = zebra.printText(layout);
+    console.log(jobFromText);
+}
+
 
 
