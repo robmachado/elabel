@@ -22,7 +22,8 @@
     "asar": "^0.12.4",
     "electron": "^1.4.13",
     "electron-builder": "^10.15.1",
-    "electron-packager": "^8.4.0"
+    "electron-packager": "^8.4.0",
+    "electron-rebuild": "^1.5.5"
   },
   "dependencies": {
     "dotenv": "^2.0.0",
