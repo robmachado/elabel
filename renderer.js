@@ -70,6 +70,7 @@ ipcRenderer.on('did-finish-load', () => {
     } else {
         document.getElementById('alertaPrinter').style.display = 'block';
     }
+    //põe foco na entrada da OP
     inputs.numop.focus();
 });
 
@@ -115,7 +116,6 @@ function opclick() {
     });
 }
 
-
 let count = 99;
 let dataHora;
 let timer;
@@ -155,12 +155,11 @@ form.addEventListener('submit', (event) => {
     liftOff(timer);
     saveBobina();
     //printLabel(); 
-    clearFields();
     inputs.numop.value = '';
+    inputs.numop.focus();
     ipcRenderer.send('did-submit-form', {
         sucesso: true,
     });
-    inputs.numop.focus();
 });
 
 function clearFields() {
@@ -240,7 +239,7 @@ function saveBobina() {
         + "')";
     console.log($query);
     let id = inputs.op.value.lpad('0',7)+''+inputs.numbob.value.lpad('0',3);
-    printLabel(id,inputs.op.value,inputs.code.value, inputs.numbob.value, pl, pb, dataHora);    
+    printLabel(id,inputs.op.value,inputs.code.value, inputs.numbob.value, pl, pb, dataHora);
     /*
     connection.query($query, function(err, rows, fields) {
         if(err){
@@ -254,7 +253,7 @@ function saveBobina() {
      });
      */
      // Close the connection
-     connection.end(function(){
+     connection.end(function() {
         // The connection has been closed
      });    
 }
@@ -284,13 +283,7 @@ function printLabel(id, op, code, numbob, pl, pb, datahora) {
 }
 
 function printZebra(layout, printer_name) {
-    //console.log(printer.list());
-	let zebra = new printer('zebra');
-    //console.log(zebra);
-    //console.log(layout);
+	let zebra = new printer(printer_name);
     let jobFromText = zebra.printText(layout);
     console.log(jobFromText);
 }
-
-
-
