@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 //carrega a classe dotenv para leitura das configurações
 //e lê automaticamente o arquivo .ENV nessa mesma pasta
@@ -16,6 +16,9 @@ const fs = require('fs');
 
 //classe de manipulação de impressoras
 const printer = require('node-printer');
+
+//classe de acesso a portas seriais, para leitura de peso
+const serport = require("serialport");
 
 //classe de acesso a base de dados MySql
 const db = require('mysql');
@@ -46,6 +49,11 @@ const buttons = {
     submit: form.querySelector('button[type="submit"]'),
 };
 
+let count = 99;
+let dataHora;
+let timer;
+
+
 inputs.pesoBruto.addEventListener('change', () => {
     calcula();
 });
@@ -58,14 +66,10 @@ function calcula() {
     inputs.pesoliq.value = inputs.pesoBruto.value - inputs.tara.value;
 }
 
-//classe de acesso a portas seriais, para leitura de peso
-//var sp = require("serialport");
-
-//console.log(process.env.BASIC)
 
 ipcRenderer.on('did-finish-load', () => {
     //procura por zebra e habilita somente se encontrar
-    if (printer.match('zebra')) {
+    if (printer.match(process.env.PRINTER) || process.env.PRINTER == "file") {
         document.querySelector('button[type="submit"]').disabled = false;
     } else {
         document.getElementById('alertaPrinter').style.display = 'block';
@@ -89,7 +93,7 @@ ipcRenderer.on('processing-did-fail', (event, error) => {
 inputs.numop.addEventListener('keydown', function(event) {
     console.log(`${event.code} was pressed.`);
     if (`${event.code}` == 'NumpadEnter' || `${event.code}` == 'Enter')  {
-        opclick();
+        buttons.btnGetOP.event('click');
     }
 });
 
@@ -97,6 +101,7 @@ inputs.numop.addEventListener('keydown', function(event) {
 buttons.btnGetOP.addEventListener('click', () => {
     opclick();
 });
+
 
 function opclick() {
     getOP(function(rows) {
@@ -107,42 +112,66 @@ function opclick() {
         if (document.getElementById('alertaPrinter').style.display == 'none') {
             document.querySelector('button[type="submit"]').disabled = false;
         }
+        let num = rows[0].num+1;
         inputs.code.value = rows[0].code;     
         inputs.desc.value = rows[0].description;
         inputs.op.value = rows[0].id ;
-        inputs.numbob.value = rows[0].seq + 1;
+        inputs.numbob.value = num;
         buttons.submit.focus();
         readPeso();
     });
 }
 
-let count = 99;
-let dataHora;
-let timer;
+
+//inicia o cronometro para ler a porta serial a cada 2 seg
 function readPeso() {
     timer = new nanotimer();
     timer.setInterval(countDown, '', '2s');
-    //timer.setTimeout(liftOff, [timer], '15s');
 }
 
+//inicia o cronometro
 function countDown() {
-    console.log('T - ' + count);
-    count--;
+    //console.log('T - ' + count);
+    count--; //decrementa
     //aqui executar a leitura do peso da balança
+    //readSerialPort();
     inputs.pesoBruto.value = "121."+count;
+    inputs.tara.value = "1.00";
+    //depois de carregar o peso e a tara calcular o peso liquido
     calcula();
 }
- 
-function liftOff(timer){
+
+//para o cronometro 
+function liftOff() {
+    console.log(timer);
     timer.clearInterval();
     console.log('And we have liftoff!');
 }
 
-/*
-buttons.submit.addEventListener('click', () => {
-    saveBobina();
-});
-*/
+function readSerialPort() {
+    let port = new serport(process.env.SERIAL, {
+        baudRate: 9600,
+        dataBits: 8,
+        stopBits: 2,
+        parity: "none",
+    });
+    port.open(function (err) {
+        if (err) {
+            //avisar sobre o erro e bloquear gravação e impressão
+            return console.log('Error opening port: ', err.message);
+        }
+    });
+    port.on('data', (data) => {
+        console.log('Received: \t', data);
+        //separar os dados recebidos e carregar
+        let pb = 200;
+        let tara = 2; 
+        inputs.pesoBruto.value = pb;
+        inputs.tara.value = tara;
+    });
+}
+
+
 
 //quando o botão submit for acionado 
 //gravar os dados na base
@@ -151,15 +180,15 @@ buttons.submit.addEventListener('click', () => {
 //se fracasso, avisar o operador 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
-    console.log('Acionado');
-    liftOff(timer);
+    //console.log('Acionado');
+    liftOff();
     saveBobina();
-    //printLabel(); 
-    inputs.numop.value = '';
-    inputs.numop.focus();
     ipcRenderer.send('did-submit-form', {
         sucesso: true,
     });
+    inputs.numop.value = '';
+    inputs.numop.focus();
+    clearFields();
 });
 
 function clearFields() {
@@ -189,7 +218,10 @@ function getOP(callback) {
             console.log(err.fatal);
         }
     });
-    $query = "SELECT ord.id, ord.code, ord.description, ext.seq FROM orders ord LEFT JOIN extruders ext ON ext.orders_id = ord.id WHERE ord.id='" + inputs.numop.value + "'";
+    
+    let $query = "SELECT ord.id,ord.code,ord.description,max(ext.seq) as num FROM orders ord LEFT JOIN extruders ext ON ext.orders_id = ord.id WHERE ord.id='" + inputs.numop.value + "'";
+    console.log($query);
+
     connection.query($query, function(err, rows, fields) {
         if(err){
             console.log("An error ocurred performing the query.");
@@ -226,8 +258,8 @@ function saveBobina() {
     var pb = inputs.pesoBruto.value;
     pl = pl.replace(',', '.');
     pb = pb.replace(',', '.');
-    $query = "INSERT INTO extruders (orders_id, seq, pliq, pbruto, data) VALUES ('"
-        + inputs.numop.value 
+    let $query = "INSERT INTO extruders (orders_id, seq, pliq, pbruto, data) VALUES ('"
+        + inputs.op.value 
         + "','"
         + inputs.numbob.value
         + "','"
@@ -239,19 +271,19 @@ function saveBobina() {
         + "')";
     console.log($query);
     let id = inputs.op.value.lpad('0',7)+''+inputs.numbob.value.lpad('0',3);
-    printLabel(id,inputs.op.value,inputs.code.value, inputs.numbob.value, pl, pb, dataHora);
-    /*
+    printLabel(id,inputs.op.value,inputs.code.value,inputs.numbob.value,pl,pb,dataHora);
+    
     connection.query($query, function(err, rows, fields) {
         if(err){
             console.log("An error ocurred performing the query.");
             console.log(err);
             return;
         }
-        callback(rows);
+        //callback(rows);
         //return rows;
         console.log("Query succesfully executed");
      });
-     */
+     
      // Close the connection
      connection.end(function() {
         // The connection has been closed
@@ -278,12 +310,16 @@ function printLabel(id, op, code, numbob, pl, pb, datahora) {
         data = data.replace('{pliq}', pl);
         data = data.replace('{id}', id);
         data = data.replace('{datahora}', dataHora);
-        printZebra(data, "zebra");
+        printZebra(data, process.env.PRINTER);
     });
 }
 
 function printZebra(layout, printer_name) {
-	let zebra = new printer(printer_name);
-    let jobFromText = zebra.printText(layout);
-    console.log(jobFromText);
+    if (printer_name == 'file') {
+        console.log(layout);
+    } else {    
+	    let zebra = new printer(printer_name);
+        let jobFromText = zebra.printText(layout);
+        console.log(jobFromText);
+    }
 }

@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "debug": "electron . --enable-logging --remote-debugging-port=9222",
     "package-linux": "electron-packager . elabel --overwrite --platform=linux --arch=x64 --ignore=oldfiles --icon=assets/icons/elabel.png --prune=true --out=release-builds",
     "package-win": "electron-packager . elabel --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/elabel.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Elabel App\""
   },
@@ -19,16 +20,16 @@
   "license": "MIT",
   "devDependencies": {
     "asar": "^0.12.4",
-    "electron": "^1.4.1",
+    "electron": "^1.4.13",
     "electron-builder": "^10.15.1",
-    "electron-packager": "^8.4.0",
-    "electron-prebuilt": "^1.4.13"
+    "electron-packager": "^8.4.0"
   },
   "dependencies": {
     "dotenv": "^2.0.0",
     "moment": "^2.17.1",
     "mysql": "^2.12.0",
     "nanotimer": "^0.3.14",
-    "node-printer": "^1.0.2"
+    "node-printer": "^1.0.2",
+    "serialport": "^4.0.7"
   }
 }
