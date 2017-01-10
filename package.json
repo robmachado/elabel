@@ -31,6 +31,7 @@
     "mysql": "^2.12.0",
     "nanotimer": "^0.3.14",
     "node-printer": "^1.0.2",
-    "serialport": "^4.0.7"
+    "serialport": "^4.0.7",
+    "string": "^3.3.3"
   }
 }

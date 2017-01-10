@@ -15,13 +15,15 @@ const path = require('path');
 const fs = require('fs');
 
 //classe de manipulação de impressoras
-const printer = require('node-printer');
+//const printer = require('node-printer');
+const printer = require('./src/localprinter');
 
 //classe de acesso a portas seriais, para leitura de peso
-const serport = require("serialport");
+//const serport = require("serialport");
 
 //classe de acesso a base de dados MySql
-const db = require('mysql');
+//const db = require('mysql');
+const mydb = require('./src/database');
 
 //classe para manipulação de datas
 const moment = require('moment');
@@ -49,10 +51,22 @@ const buttons = {
     submit: form.querySelector('button[type="submit"]'),
 };
 
+//entrada 
+ipcRenderer.on('did-finish-load', () => {
+    //procura por zebra e habilita somente se encontrar
+    if (printer.exists(process.env.PRINTER) || process.env.PRINTER == "file") {
+        document.querySelector('button[type="submit"]').disabled = false;
+    } else {
+        document.getElementById('alertaPrinter').style.display = 'block';
+    }
+    //põe foco na entrada da OP
+    inputs.numop.focus();
+});
+
+
 let count = 99;
 let dataHora;
 let timer;
-
 
 inputs.pesoBruto.addEventListener('change', () => {
     calcula();
@@ -67,16 +81,6 @@ function calcula() {
 }
 
 
-ipcRenderer.on('did-finish-load', () => {
-    //procura por zebra e habilita somente se encontrar
-    if (printer.match(process.env.PRINTER) || process.env.PRINTER == "file") {
-        document.querySelector('button[type="submit"]').disabled = false;
-    } else {
-        document.getElementById('alertaPrinter').style.display = 'block';
-    }
-    //põe foco na entrada da OP
-    inputs.numop.focus();
-});
 
 //chamado quando o processo foi realizado com sucesso
 ipcRenderer.on('processing-did-succeed', (event, html) => {
@@ -104,7 +108,11 @@ buttons.btnGetOP.addEventListener('click', () => {
 
 
 function opclick() {
-    getOP(function(rows) {
+    mydb.getOP(inputs.numop.value, function(err, rows) {
+        if (err) {
+            console.log("Capturou o erro ... "+err);
+            return;
+        }
         if (rows == '') {
             document.querySelector('button[type="submit"]').disabled = true;
             return;
@@ -120,6 +128,24 @@ function opclick() {
         buttons.submit.focus();
         readPeso();
     });
+    /*
+    mydb.getOP(function(rows) {
+        if (rows == '') {
+            document.querySelector('button[type="submit"]').disabled = true;
+            return;
+        }
+        if (document.getElementById('alertaPrinter').style.display == 'none') {
+            document.querySelector('button[type="submit"]').disabled = false;
+        }
+        let num = rows[0].num+1;
+        inputs.code.value = rows[0].code;     
+        inputs.desc.value = rows[0].description;
+        inputs.op.value = rows[0].id ;
+        inputs.numbob.value = num;
+        buttons.submit.focus();
+        readPeso();
+    });
+    */
 }
 
 
@@ -148,6 +174,7 @@ function liftOff() {
     console.log('And we have liftoff!');
 }
 
+/*
 function readSerialPort() {
     let port = new serport(process.env.SERIAL, {
         baudRate: 9600,
@@ -170,8 +197,7 @@ function readSerialPort() {
         inputs.tara.value = tara;
     });
 }
-
-
+*/
 
 //quando o botão submit for acionado 
 //gravar os dados na base
@@ -182,28 +208,18 @@ form.addEventListener('submit', (event) => {
     event.preventDefault();
     //console.log('Acionado');
     liftOff();
-    saveBobina();
+    //saveBobina();
     ipcRenderer.send('did-submit-form', {
         sucesso: true,
     });
-    inputs.numop.value = '';
     inputs.numop.focus();
-    clearFields();
+    form.reset();
 });
 
-function clearFields() {
-    inputs.code.value = '';     
-    inputs.desc.value = '';
-    inputs.op.value = '';
-    inputs.numbob.value = '';
-    inputs.pesoliq.value = '';
-    inputs.tara.value = '';
-    inputs.pesoBruto.value = '';
-}
-
+/*
 //executa a query na base de dados
 function getOP(callback) {
-    clearFields();
+    //clearFields();
     let connection = db.createConnection({
         host     : process.env.DB_HOST,
         user     : process.env.DB_USER,
@@ -296,6 +312,8 @@ String.prototype.lpad = function(padString, length) {
         str = padString + str;
     return str;
 }
+*/
+
 
 function printLabel(id, op, code, numbob, pl, pb, datahora) {
     let layoutPath = path.join(__dirname, 'label_layout_epl2.dat');
