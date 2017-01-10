@@ -1,0 +1,7 @@
+#!/bin/bash
+socat -u -u pty,raw,echo=0,link=/home/administrador/dev/ttyS20 pty,raw,echo=0,link=/home/administrador/dev/ttyS21
+
+#sudo chown administrador:administrador /dev/ttyS20
+#sudo chown administrador:administrador /dev/ttyS21
+#sudo chmod 777 /dev/ttyS20
+#sudo chmod 777 /dev/ttyS21

@@ -23,7 +23,6 @@ function createWindow() {
         protocol: 'file:',
         slashes: true
     }));
-
     //abre o devtools do browser, em produção isso deve estar comentado
     if (process.env.MODE == "dev") {
         mainWindow.webContents.openDevTools();

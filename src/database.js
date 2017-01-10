@@ -47,7 +47,7 @@ function getOP(numop, callback) {
      });
 }
 
-function saveBobina() {
+function save(orders_id, seq, pliq, pbruto, data) {
     let connection = db.createConnection({
         host     : process.env.DB_HOST,
         user     : process.env.DB_USER,
@@ -62,34 +62,24 @@ function saveBobina() {
             console.log(err.fatal);
         }
     });
-    //let data = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    //dataHora = moment().format('YYYY-MM-DD HH:mm:ss');
-    var pl = inputs.pesoliq.value;
-    var pb = inputs.pesoBruto.value;
-    pl = pl.replace(',', '.');
-    pb = pb.replace(',', '.');
     let $query = "INSERT INTO extruders (orders_id, seq, pliq, pbruto, data) VALUES ('"
-        + inputs.op.value 
+        + orders_id 
         + "','"
-        + inputs.numbob.value
+        + seq
         + "','"
-        + pl
+        + pliq
         + "','"
-        + pb
+        + pbruto
         + "','" 
-        +  dataHora
+        +  data
         + "')";
     console.log($query);
-    //let id = inputs.op.value.lpad('0',7)+''+inputs.numbob.value.lpad('0',3);
-    //printLabel(id,inputs.op.value,inputs.code.value,inputs.numbob.value,pl,pb,dataHora);
     connection.query($query, function(err, rows, fields) {
         if(err){
             console.log("An error ocurred performing the query.");
             console.log(err);
             return;
         }
-        //callback(rows);
-        //return rows;
         console.log("Query succesfully executed");
      });
      
@@ -101,4 +91,4 @@ function saveBobina() {
 }
 
 module.exports.getOP = getOP;
-module.exports.saveBobina = saveBobina;
+module.exports.save = save;

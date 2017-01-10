@@ -3,37 +3,41 @@
 //classe de acesso a portas seriais, para leitura de peso
 const serport = require("serialport");
 
-let conn = null;
+let conn;
 
-exports.connect = function(port, baudRate, dataBits, stopBits, parity, callback) {
-    conn = new serport(port, {
-        baudRate: 9600,
-        dataBits: 8,
-        stopBits: 2,
-        parity: "none",
+function connect(port) {
+    conn = new serport(
+        port, {
+            baudRate: 9600,
+            dataBits: 8,
+            stopBits: 2,
+            parity: "none",
+            autoOpen: false
+        }
+    );
+    conn.on('error', function(err) {
+        console.log('Error: ', err.message);
     });
+}
+
+function read(port,baud,dtBits,spBits,par,callback) {
+    if (!conn) {
+        connect(port);
+    }
     conn.open(function (err) {
         if (err) {
-            callback(err.message, '');
+            console.log("pos 2 : "+err);
+            return;
         }
+        console.log('open');
+        conn.on('data', function(data) {
+            console.log('data received: ' + data);
+        });  
     });
+    let dados = [200, 2]; 
+    callback(null, dados);
+    conn.close();
+    conn = null;
 }
 
-exports.read = function(callback) {
-    conn.open(function (err) {
-        if (err) {
-            callback(err.message, '');
-        }
-    });
-    port.on('data', (data) => {
-        console.log('Received: \t', data);
-        //separar os dados recebidos e carregar
-        let dados = [200, 2]; 
-        callback('', dados);
-    });
-    close();
-}
-
-exports.close = function() {
-    port.close();
-}
+module.exports.read = read;
