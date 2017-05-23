@@ -6,8 +6,10 @@
   "scripts": {
     "start": "electron .",
     "debug": "electron . --enable-logging --remote-debugging-port=9222",
-    "package-linux": "electron-packager . elabel --overwrite --platform=linux --arch=x64 --ignore=oldfiles --icon=assets/icons/elabel.png --prune=true --out=release-builds",
-    "package-win": "electron-packager . elabel --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/elabel.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Elabel App\""
+    "packx64": "electron-packager . elabel --overwrite --platform=linux --arch=x64 --icon=assets/icons/elabel.png --prune=true --out=release-builds",
+    "packx32": "electron-packager . elabel --overwrite --platform=linux --arch=ia32 --icon=assets/icons/elabel.png --prune=true --out=release-builds",
+    "package-win": "electron-packager . elabel --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/elabel.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Elabel App\"",
+    "dist": "build -wl --x64 --ia32"
   },
   "repository": "https://github.com/robmachado/elabel",
   "keywords": [
@@ -19,11 +21,11 @@
   "author": "Roberto L. Machado",
   "license": "MIT",
   "devDependencies": {
-    "asar": "^0.12.4",
-    "electron": "^1.4.13",
-    "electron-builder": "^10.15.1",
-    "electron-packager": "^8.4.0",
-    "electron-rebuild": "^1.5.6"
+    "asar": "^0.13.0",
+    "electron": "^1.6.2",
+    "electron-builder": "^16.6.1",
+    "electron-packager": "^8.6.0",
+    "electron-rebuild": "^1.5.10"
   },
   "dependencies": {
     "dotenv": "^2.0.0",

@@ -1,7 +1,8 @@
 #!/bin/bash
 socat -u -u pty,raw,echo=0,link=/home/administrador/dev/ttyS20 pty,raw,echo=0,link=/home/administrador/dev/ttyS21
-
-#sudo chown administrador:administrador /dev/ttyS20
-#sudo chown administrador:administrador /dev/ttyS21
-#sudo chmod 777 /dev/ttyS20
-#sudo chmod 777 /dev/ttyS21
+sudo chown administrador:administrador /home/administrador/dev/ttyS20
+sudo chown administrador:administrador /home/administrador/dev/ttyS21
+sudo chmod 777 /home/administrador/dev/ttyS20
+sudo chmod 777 /home/administrador/dev/ttyS21
+#echo "" > /home/administrador/dev/ttyS20  ===> envia para ttyS21
+#cat < /home/administrador/dev/ttyS21 <=== recebe de ttSy20

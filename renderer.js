@@ -4,19 +4,22 @@
 //e lê automaticamente o arquivo .ENV nessa mesma pasta
 require('dotenv').config();
 
-//classes principais
+//classes principais do electron
 const { ipcRenderer, remote, shell } = require('electron');
 
 //classe de gestão de dialogos
 const { dialog } = remote;
 
+//classe de montagem de paths
 const path = require('path');
 
+//classe de acesso ao disco
 const fs = require('fs');
 
 //classe de manipulação de impressoras
 const printer = require('./src/localprinter');
 
+//classe de manipulação das etiquetas
 const label = require('./src/label');
 
 //classe de acesso a portas seriais, para leitura de peso
@@ -28,12 +31,13 @@ const mydb = require('./src/database');
 //classe para manipulação de datas
 const moment = require('moment');
 
+//classe de controle de tempo
 const nanotimer = require('nanotimer');
 
 //classe para manipulação dos campos de formulário
 const form = document.querySelector('form');
 
-//campos do formulário
+//define os campos do formulário
 const inputs = {
     numop: form.querySelector('input[name="numop"]'),
     op: form.querySelector('input[name="op"]'),
@@ -45,7 +49,7 @@ const inputs = {
     pesoliq: form.querySelector('input[name="pesoLiquido"]')
 };
 
-//botões do formulário
+//define os botões do formulário
 const buttons = {
     btnGetOP: document.getElementById('btnGetOP'),
     submit: form.querySelector('button[type="submit"]'),
@@ -64,14 +68,17 @@ ipcRenderer.on('did-finish-load', () => {
     inputs.numop.focus();
 });
 
+//quando o peso bruto é modificado
 inputs.pesoBruto.addEventListener('change', () => {
     calcula();
 });
 
+//qunado a tara é modificada
 inputs.tara.addEventListener('change', () => {
     calcula();
 });
 
+//calcula o peso liquido
 function calcula() {
     inputs.pesoliq.value = inputs.pesoBruto.value - inputs.tara.value;
 }
@@ -101,6 +108,7 @@ buttons.btnGetOP.addEventListener('click', () => {
 
 //evento click no botão de busca da OP foi acionado
 function opclick() {
+    //usa a classe mydb para buscar os dados da OP
     mydb.getOP(inputs.numop.value, function(err, rows) {
         if (err) {
             console.log("Capturou o erro ... "+err);
@@ -118,6 +126,7 @@ function opclick() {
         inputs.desc.value = rows[0].description;
         inputs.op.value = rows[0].id ;
         inputs.numbob.value = num;
+        
         buttons.submit.focus();
         readPeso();
     });
