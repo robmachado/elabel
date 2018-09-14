@@ -2,6 +2,3 @@ node_modules
 release-builds
 bower_components
 dist
-package-lock.json
-yarn.lock
-yarn-error.log
