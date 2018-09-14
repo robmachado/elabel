@@ -9,7 +9,8 @@
     "packx64": "electron-packager . elabel --overwrite --platform=linux --arch=x64 --icon=assets/icons/elabel.png --prune=true --out=release-builds",
     "packx32": "electron-packager . elabel --overwrite --platform=linux --arch=ia32 --icon=assets/icons/elabel.png --prune=true --out=release-builds",
     "package-win": "electron-packager . elabel --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/elabel.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Elabel App\"",
-    "dist": "build -wl --x64 --ia32"
+    "dist": "build -l --x64",
+    "rebuild": "electron-rebuild -f -w serialport"
   },
   "repository": "https://github.com/robmachado/elabel",
   "keywords": [
@@ -21,19 +22,18 @@
   "author": "Roberto L. Machado",
   "license": "MIT",
   "devDependencies": {
-    "asar": "^0.13.0",
-    "electron": "^1.6.2",
-    "electron-builder": "^16.6.1",
-    "electron-packager": "^8.6.0",
-    "electron-rebuild": "^1.5.10"
+    "electron": "^2.0.9",
+    "electron-builder": "^20.28.4",
+    "electron-packager": "^12.1.2",
+    "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
-    "dotenv": "^2.0.0",
-    "moment": "^2.17.1",
-    "mysql": "^2.12.0",
-    "nanotimer": "^0.3.14",
-    "node-printer": "^1.0.2",
-    "serialport": "^4.0.7",
+    "dotenv": "^6.0.0",
+    "moment": "^2.22.2",
+    "mysql": "^2.16.0",
+    "nanotimer": "^0.3.15",
+    "node-printer": "^1.0.3",
+    "serialport": "^7.0.2",
     "string": "^3.3.3"
   }
 }

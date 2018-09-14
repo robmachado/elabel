@@ -137,14 +137,29 @@ let count = 100;
 let timer;
 
 //inicia o cronometro para ler a porta serial a cada 2 seg
+/*
 function readPeso() {
     timer = new nanotimer();
     timer.setInterval(countDown, '', '2s');
 }
+*/
+serial.conn(process.env.SERIAL_PORT);
+serial.read((pB) => {
+    inputs.pesoBruto.value = pB;
+    inputs.tara.value = 1;
+    calcula();
+})
 
+/*
 //inicia o cronometro
 function countDown() {
     count--; //decrementa
+    serial.read((pB) => {
+        inputs.pesoBruto.value = pB;
+        inputs.tara.value = 1;
+        calcula();
+    }) 
+    
     serial.read(
         process.env.SERIAL_PORT,
         process.env.SERIAL_BAUD,
@@ -161,13 +176,14 @@ function countDown() {
             calcula();
         }
     );
-}
-
+    
+}*/
+/*
 //paraliza o cronometro 
 function liftOff() {
     timer.clearInterval();
 }
-
+*/
 //quando o botão submit for acionado 
 //gravar os dados na base
 //enviar a etiqueta para a impressora
