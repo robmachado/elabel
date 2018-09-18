@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 //estabelece classes principais
 const { app, BrowserWindow, ipcMain } = require('electron');
@@ -14,10 +14,11 @@ const url = require('url');
 require('dotenv').config();
 
 let mainWindow;
+let iconPath = path.join(__dirname, 'supermarket-barcode.png');
 
 //cria a janela principal 
 function createWindow() {
-    mainWindow = new BrowserWindow({ width: 680, height: 520, titleBarStyle: 'hidden' });
+    mainWindow = new BrowserWindow({ width: 680, height: 520, titleBarStyle: 'hidden', title: 'elabel' ,icon: iconPath });
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file:',

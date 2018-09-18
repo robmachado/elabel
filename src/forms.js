@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 //classe para manipulação dos campos de formulário
 const form = document.querySelector('form');

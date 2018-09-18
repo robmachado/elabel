@@ -1,4 +1,3 @@
-'use strict';
 
 //carrega a classe dotenv para leitura das configurações
 //e lê automaticamente o arquivo .ENV nessa mesma pasta
@@ -17,7 +16,8 @@ const path = require('path');
 const fs = require('fs');
 
 //classe de manipulação de impressoras
-const printer = require('./src/localprinter');
+//const printer = require('./src/localprinter');
+const printer = require('printer');
 
 //classe de manipulação das etiquetas
 const label = require('./src/label');
@@ -126,7 +126,7 @@ function opclick() {
         inputs.desc.value = rows[0].description;
         inputs.op.value = rows[0].id ;
         inputs.numbob.value = num;
-        
+        inputs.tara.value = '0.6';
         buttons.submit.focus();
         readPeso();
     });
@@ -146,7 +146,6 @@ function readPeso() {
 serial.conn(process.env.SERIAL_PORT);
 serial.read((pB) => {
     inputs.pesoBruto.value = pB;
-    inputs.tara.value = 1;
     calcula();
 })
 
@@ -193,16 +192,27 @@ form.addEventListener('submit', (event) => {
     event.preventDefault();
     liftOff();
     let dateh = moment().format('YYYY-MM-DD HH:mm:ss');
-    var code = String(inputs.code.value).trim();
+    var codigo = inputs.code.value;
+    var code = codigo.trim();
     var pl = inputs.pesoliq.value;
     var pb = inputs.pesoBruto.value;
     var order_id = inputs.op.value;
     var seq = inputs.numbob.value;
-    pl = pl.replace(',', '.');
-    pb = pb.replace(',', '.');    
+    //pl = pl.replace(',', '.');
+    //pb = pb.replace(',', '.');    
     mydb.save(order_id, seq, pl, pb, dateh);
     let layout = label.render(order_id,code,seq,pl,pb,dateh);
-    printer.print(layout);
+    //console.log('default printer name: ' + (printer.getDefaultPrinterName() || 'is not defined on your computer'));
+    //printer.print(layout);
+    printer.printDirect({
+        data: layout,
+		printer: 'zebra', 
+		type: "RAW",
+		success: function(){
+			console.log("printed: "+barcode_text);
+		},
+		error: function(err){console.log(err);}
+    });
     ipcRenderer.send('did-submit-form', {
         sucesso: true,
     });

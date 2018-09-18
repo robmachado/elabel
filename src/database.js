@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 //carrega a classe dotenv para leitura das configurações
 //e lê automaticamente o arquivo .ENV nessa mesma pasta

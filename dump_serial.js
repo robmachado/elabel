@@ -1,5 +1,6 @@
 'use strict';
-
+//npm install printer --runtime=electron --target=2.0.9 --target_arch=x64
+//npm install -g node-gyp
 const SerialPort = require('serialport')
 const Readline = require('@serialport/parser-readline')
 
