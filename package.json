@@ -10,6 +10,7 @@
     "packx32": "electron-packager . elabel --overwrite --platform=linux --arch=ia32 --icon=assets/icons/elabel.png --prune=true --out=release-builds",
     "package-win": "electron-packager . elabel --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/elabel.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Elabel App\"",
     "dist": "build -l --x64",
+    "postinstall": "electron-builder install-app-deps",
     "rebuild": "electron-rebuild -f -w serialport"
   },
   "repository": "https://github.com/robmachado/elabel",
@@ -33,6 +34,7 @@
     "mysql": "^2.16.0",
     "nanotimer": "^0.3.15",
     "printer": "^0.2.2",
-    "serialport": "^7.0.2"
+    "serialport": "^7.0.2",
+    "string": "^3.3.3"
   }
 }

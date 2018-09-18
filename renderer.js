@@ -58,12 +58,12 @@ const buttons = {
 //entrada 
 ipcRenderer.on('did-finish-load', () => {
     //procura por zebra e habilita somente se encontrar
-    if (printer.exists(process.env.PRINTER) || process.env.PRINTER == "file") {
+    //if (printer.exists(process.env.PRINTER) || process.env.PRINTER == "file") {
         document.querySelector('button[type="submit"]').disabled = false;
-        printer.set(process.env.PRINTER);
-    } else {
-        document.getElementById('alertaPrinter').style.display = 'block';
-    }
+        //printer.set(process.env.PRINTER);
+    //} else {
+    //    document.getElementById('alertaPrinter').style.display = 'block';
+    //}
     //põe foco na entrada da OP
     inputs.numop.focus();
 });
