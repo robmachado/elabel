@@ -137,17 +137,18 @@ let count = 100;
 let timer;
 
 //inicia o cronometro para ler a porta serial a cada 2 seg
-/*
+
 function readPeso() {
-    timer = new nanotimer();
-    timer.setInterval(countDown, '', '2s');
+    serial.conn(process.env.SERIAL_PORT);
+    serial.read((pB) => {
+        inputs.pesoBruto.value = pB;
+        calcula();
+    })
+    //timer = new nanotimer();
+    //timer.setInterval(countDown, '', '2s');
 }
-*/
-serial.conn(process.env.SERIAL_PORT);
-serial.read((pB) => {
-    inputs.pesoBruto.value = pB;
-    calcula();
-})
+
+
 
 /*
 //inicia o cronometro
@@ -190,7 +191,7 @@ function liftOff() {
 //se fracasso, avisar o operador 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
-    liftOff();
+    //liftOff();
     let dateh = moment().format('YYYY-MM-DD HH:mm:ss');
     var codigo = inputs.code.value;
     var code = codigo.trim();
@@ -202,11 +203,11 @@ form.addEventListener('submit', (event) => {
     //pb = pb.replace(',', '.');    
     mydb.save(order_id, seq, pl, pb, dateh);
     let layout = label.render(order_id,code,seq,pl,pb,dateh);
-    //console.log('default printer name: ' + (printer.getDefaultPrinterName() || 'is not defined on your computer'));
+    console.log('default printer name: ' + (printer.getDefaultPrinterName() || 'is not defined on your computer'));
+    console.log(layout);
     //printer.print(layout);
     printer.printDirect({
         data: layout,
-		printer: 'zebra', 
 		type: "RAW",
 		success: function(){
 			console.log("printed: "+barcode_text);
