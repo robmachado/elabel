@@ -80,7 +80,8 @@ inputs.tara.addEventListener('change', () => {
 
 //calcula o peso liquido
 function calcula() {
-    inputs.pesoliq.value = inputs.pesoBruto.value - inputs.tara.value;
+    var num = inputs.pesoBruto.value - inputs.tara.value;
+    inputs.pesoliq.value = num.toFixed(2);
 }
 
 //chamado quando o processo foi realizado com sucesso
