@@ -120,8 +120,12 @@ function opclick() {
         if (rows[0].tara !== null) {
             tara = rows[0].tara;
         }
-        tara.toFixed(2); 
-        inputs.shelflife.value = rows[0].shelflife;
+        tara.toFixed(2);
+        if (rows[0].shelflife < 10) {
+            inputs.shelflife.value = 365;   
+        } else {
+            inputs.shelflife.value = rows[0].shelflife;
+        }
         inputs.code.value = rows[0].code;
         inputs.codcli.value = rows[0].customercode;
         inputs.desc.value = rows[0].description;
