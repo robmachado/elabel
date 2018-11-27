@@ -26,7 +26,7 @@ function getOP(numop, callback) {
     });
     //monta a query
     //let query = "SELECT ord.id,ord.code,ord.customercode,ord.description,max(ext.seq) as num FROM orders ord LEFT JOIN extruders ext ON ext.orders_id = ord.id WHERE ord.id='" + numop + "'";
-    let query = "SELECT ord.id, ord.code, ord.customercode, ord.description, ROUND(ext.pbruto - ext.pliq,2) AS tara, MAX( ext.seq ) AS num FROM orders ord LEFT JOIN extruders ext ON ext.orders_id = ord.id WHERE ord.id='" + numop + "'";
+    let query = "SELECT ord.id, ord.code, ord.customercode, ord.description, ord.shelflife, ROUND(ext.pbruto - ext.pliq,2) AS tara, MAX( ext.seq ) AS num FROM orders ord LEFT JOIN extruders ext ON ext.orders_id = ord.id WHERE ord.id='" + numop + "'";
     connection.query(query, function(err, rows, fields) {
         if(err){
             callback(new Error(err.message), null);

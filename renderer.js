@@ -40,6 +40,7 @@ const form = document.querySelector('form');
 
 //define os campos do formulário
 const inputs = {
+    shelflife: form.querySelector('input[name="shelflife"]'),
     numop: form.querySelector('input[name="numop"]'),
     op: form.querySelector('input[name="op"]'),
     code: form.querySelector('input[name="code"]'),
@@ -120,6 +121,7 @@ function opclick() {
             tara = rows[0].tara;
         }
         tara.toFixed(2); 
+        inputs.shelflife.value = rows[0].shelflife;
         inputs.code.value = rows[0].code;
         inputs.codcli.value = rows[0].customercode;
         inputs.desc.value = rows[0].description;
@@ -157,6 +159,7 @@ function readPeso() {
 //se fracasso, avisar o operador 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
+    let sl = inputs.shelflife.value;
     let dateh = moment().format('YYYY-MM-DD HH:mm:ss');
     var codigo = inputs.code.value;
     var code = codigo.trim();
@@ -166,8 +169,9 @@ form.addEventListener('submit', (event) => {
     var pb = inputs.pesoBruto.value;
     var order_id = inputs.op.value;
     var seq = inputs.numbob.value;
+    var validade = moment(dateh, "YYYY-MM-DD HH:mm:ss").add(sl, 'days').format('YYYY-MM-DD');
     mydb.save(order_id, seq, pl, pb, dateh);
-    let layout = label.render(order_id,code,codcli,seq,pl,pb,dateh);
+    let layout = label.render(order_id,code,codcli,seq,pl,pb,dateh,validade);
     console.log('default printer name: ' + (printer.getDefaultPrinterName() || 'is not defined on your computer'));
     console.log(layout);
     printer.printDirect({
