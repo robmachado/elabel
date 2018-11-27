@@ -1,6 +1,6 @@
 {
   "name": "elabel",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Zebra Label Printing",
   "main": "main.js",
   "scripts": {

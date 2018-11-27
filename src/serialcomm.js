@@ -15,10 +15,15 @@ function read(callback) {
     parser.on('data', (data) => {
         var res = data.split(" ");
         if (res[0] !== '**:') {
-            var pB = res[1].replace(/[^0-9.,]+/g, "");
-            var bruto = parseFloat(pB.replace(',', '.'));
-            //console.log(bruto);
-            callback(bruto);
+            if (res.length == 4) {
+                var pB = res[1].replace(/[^0-9.,]+/g, "");
+                var bruto = parseFloat(pB.replace(',', '.'));
+                console.log(res);
+            
+                var pt = res[3].replace(/[^0-9.,]+/g, "");
+                var tara = parseFloat(pt.replace(',', '.'));
+                callback(bruto, tara);
+            }
         }
     })
 }

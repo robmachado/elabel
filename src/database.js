@@ -21,27 +21,22 @@ function getOP(numop, callback) {
         // em caso de erro
         if(err){
             callback(new Error(err.message), null);
-            //console.log(err.code);
-            //console.log(err.fatal);
             return;
         }
     });
     //monta a query
-    let $query = "SELECT ord.id,ord.code,ord.description,max(ext.seq) as num FROM orders ord LEFT JOIN extruders ext ON ext.orders_id = ord.id WHERE ord.id='" + numop + "'";
-    //console.log($query);
-//callback(new Error('Forcei um erro'), null);
-    connection.query($query, function(err, rows, fields) {
+    //let query = "SELECT ord.id,ord.code,ord.customercode,ord.description,max(ext.seq) as num FROM orders ord LEFT JOIN extruders ext ON ext.orders_id = ord.id WHERE ord.id='" + numop + "'";
+    let query = "SELECT ord.id, ord.code, ord.customercode, ord.description, ROUND(ext.pbruto - ext.pliq,2) AS tara, MAX( ext.seq ) AS num FROM orders ord LEFT JOIN extruders ext ON ext.orders_id = ord.id WHERE ord.id='" + numop + "'";
+    connection.query(query, function(err, rows, fields) {
         if(err){
             callback(new Error(err.message), null);
-            //console.log("An error ocurred performing the query.");
-            //console.log(err);
             return;
         }
         callback(null, rows);
         console.log("Query succesfully executed");
      });
      // Close the connection
-     connection.end(function(){
+     connection.end(function() {
         // The connection has been closed
         console.log("The connection has been closed");
      });

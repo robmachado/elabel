@@ -14,7 +14,7 @@ const url = require('url');
 require('dotenv').config();
 
 let mainWindow;
-let iconPath = path.join(__dirname, 'supermarket-barcode.png');
+let iconPath = path.join(__dirname, 'app_icon.png');
 
 //cria a janela principal 
 function createWindow() {
@@ -44,7 +44,6 @@ function createWindow() {
 //executa ao submeter
 function handleSubmission() {
     ipcMain.on('did-submit-form', (event, argument) => {
-    
         /*
         const { source, destination, name, fps } = argument;
         generator(source, destination, name, fps).then(

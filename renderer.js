@@ -17,6 +17,7 @@ const fs = require('fs');
 
 //classe de manipulação de impressoras
 //const printer = require('./src/localprinter');
+//const printer = require('printer');
 const printer = require('printer');
 
 //classe de manipulação das etiquetas
@@ -42,6 +43,7 @@ const inputs = {
     numop: form.querySelector('input[name="numop"]'),
     op: form.querySelector('input[name="op"]'),
     code: form.querySelector('input[name="code"]'),
+    codcli: form.querySelector('input[name="codcli"]'),
     desc: form.querySelector('input[name="desc"]'),
     numbob: form.querySelector('input[name="numbob"]'),
     pesoBruto: form.querySelector('input[name="pesoBruto"]'),
@@ -57,14 +59,7 @@ const buttons = {
 
 //entrada 
 ipcRenderer.on('did-finish-load', () => {
-    //procura por zebra e habilita somente se encontrar
-    //if (printer.exists(process.env.PRINTER) || process.env.PRINTER == "file") {
-        document.querySelector('button[type="submit"]').disabled = false;
-        //printer.set(process.env.PRINTER);
-    //} else {
-    //    document.getElementById('alertaPrinter').style.display = 'block';
-    //}
-    //põe foco na entrada da OP
+    document.querySelector('button[type="submit"]').disabled = false;
     inputs.numop.focus();
 });
 
@@ -72,12 +67,9 @@ ipcRenderer.on('did-finish-load', () => {
 inputs.pesoBruto.addEventListener('change', () => {
     calcula();
 });
-
-//qunado a tara é modificada
 inputs.tara.addEventListener('change', () => {
     calcula();
 });
-
 //calcula o peso liquido
 function calcula() {
     var num = inputs.pesoBruto.value - inputs.tara.value;
@@ -123,68 +115,41 @@ function opclick() {
             document.querySelector('button[type="submit"]').disabled = false;
         }
         let num = rows[0].num+1;
-        inputs.code.value = rows[0].code;     
+        let tara = 0;
+        if (rows[0].tara !== null) {
+            tara = rows[0].tara;
+        }
+        tara.toFixed(2); 
+        inputs.code.value = rows[0].code;
+        inputs.codcli.value = rows[0].customercode;
         inputs.desc.value = rows[0].description;
-        inputs.op.value = rows[0].id ;
+        inputs.op.value = rows[0].id;
         inputs.numbob.value = num;
-        inputs.tara.value = '0.6';
+        inputs.tara.value = tara;
         buttons.submit.focus();
         readPeso();
     });
 }
 
-
-let count = 100;
-let timer;
-
-//inicia o cronometro para ler a porta serial a cada 2 seg
-
 function readPeso() {
     serial.conn(process.env.SERIAL_PORT);
-    serial.read((pB) => {
-        inputs.pesoBruto.value = pB;
-        calcula();
-    })
-    //timer = new nanotimer();
-    //timer.setInterval(countDown, '', '2s');
-}
-
-
-
-/*
-//inicia o cronometro
-function countDown() {
-    count--; //decrementa
-    serial.read((pB) => {
-        inputs.pesoBruto.value = pB;
-        inputs.tara.value = 1;
-        calcula();
-    }) 
-    
-    serial.read(
-        process.env.SERIAL_PORT,
-        process.env.SERIAL_BAUD,
-        process.env.SERIAL_DATABITS,
-        process.env.SERIAL_STOPBITS,
-        process.env.SERIAL_PARITY,
-        function(err, data) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            inputs.pesoBruto.value = data[0];
-            inputs.tara.value = data[1];
+    serial.read((pB, tara) => {
+        if (tara > 0) {
+            let p = pB + 0;
+            let t = tara + 0;
+            inputs.pesoliq.value = p.toFixed(2);
+            inputs.tara.value = t.toFixed(2);
+            let num = pB + tara;
+            inputs.pesoBruto.value = num.toFixed(2);
+        } else {
+            let p = pB + 0;
+            inputs.pesoBruto.value = p.toFixed(2);
             calcula();
         }
-    );
-    
-}*/
-/*
-//paraliza o cronometro 
-function liftOff() {
-    timer.clearInterval();
+    })
 }
-*/
+
+
 //quando o botão submit for acionado 
 //gravar os dados na base
 //enviar a etiqueta para a impressora
@@ -192,26 +157,24 @@ function liftOff() {
 //se fracasso, avisar o operador 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
-    //liftOff();
     let dateh = moment().format('YYYY-MM-DD HH:mm:ss');
     var codigo = inputs.code.value;
     var code = codigo.trim();
+    var ccli = inputs.codcli.value;
+    var codcli = ccli.trim();
     var pl = inputs.pesoliq.value;
     var pb = inputs.pesoBruto.value;
     var order_id = inputs.op.value;
     var seq = inputs.numbob.value;
-    //pl = pl.replace(',', '.');
-    //pb = pb.replace(',', '.');    
     mydb.save(order_id, seq, pl, pb, dateh);
-    let layout = label.render(order_id,code,seq,pl,pb,dateh);
+    let layout = label.render(order_id,code,codcli,seq,pl,pb,dateh);
     console.log('default printer name: ' + (printer.getDefaultPrinterName() || 'is not defined on your computer'));
     console.log(layout);
-    //printer.print(layout);
     printer.printDirect({
         data: layout,
 		type: "RAW",
 		success: function(){
-			console.log("printed: "+barcode_text);
+			console.log("printed: SUCCESS");
 		},
 		error: function(err){console.log(err);}
     });
